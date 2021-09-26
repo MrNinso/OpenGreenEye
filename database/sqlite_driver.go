@@ -57,11 +57,19 @@ func (s SqliteDriver) updateVersion() {
 			panic(err)
 		}
 
-		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS SENSORS_TAGS(ID INTEGER PRIMARY KEY, NAME TEXT, TAGS TEXT)"); err != nil {
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS SENSORS(ID INTEGER PRIMARY KEY, NAME TEXT UNIQUE, TYPE CHAR(1))"); err != nil {
 			panic(err)
 		}
 
-		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS SENSORS_IPS(SENSOR_ID INTEGER, TOKEN CHAR(36), IP CHAR(15) UNIQUE)"); err != nil {
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS SENSORS_TAGS(SENSOR_ID INTEGER, TAG TEXT, UNIQUE (SENSOR_ID, TAG))"); err != nil {
+			panic(err)
+		}
+
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS SENSORS_IPS(SENSOR_ID INTEGER UNIQUE, TOKEN CHAR(36), IP CHAR(15))"); err != nil {
+			panic(err)
+		}
+
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS SENSORS_VALUES(SENSOR_ID INTEGER, VALUE REAL, TIME DATE)"); err != nil {
 			panic(err)
 		}
 
