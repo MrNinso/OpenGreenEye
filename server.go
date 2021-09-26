@@ -5,8 +5,8 @@ package main
 import (
 	"OpenGreenEye/api"
 	"OpenGreenEye/database"
+	"OpenGreenEye/validate"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	jsoniter "github.com/json-iterator/go"
 	"os"
@@ -31,12 +31,10 @@ func main() {
 		JSONEncoder:              j.Marshal,
 	})
 
-	validate := configValidate()
-
 	apiDriver := api.ApiDriver{
 		App:          app,
 		JSONDencoder: j.Unmarshal,
-		Validate:     validate.Struct,
+		Validate:     validate.ConfigValidate().Struct,
 	}
 
 	port := os.Getenv("PORT")
@@ -50,10 +48,4 @@ func main() {
 	if err := apiDriver.Listen(fmt.Sprint(":", port)); err != nil {
 		panic(err)
 	}
-}
-
-func configValidate() *validator.Validate {
-	v := validator.New()
-
-	return v
 }
