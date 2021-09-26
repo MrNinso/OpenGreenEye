@@ -6,6 +6,7 @@ import (
 	"OpenGreenEye/database"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
+	"strconv"
 )
 
 type ApiDriver struct {
@@ -53,7 +54,8 @@ func LoadRoutes(api *ApiDriver, db database.DriverGlobal) {
 
 	sensorsRouter.Router = api.Group("/api/v1/sensors", func(ctx *fiber.Ctx) error {
 		if key := ctx.Get(KEY_HEADER_NAME, ""); key != "" {
-			if publicRouter.DB.CheckSensorKey(key, ctx.IP()) {
+			if id := sensorsRouter.DB.CheckSensorKey(key, ctx.IP()); id >= 0 {
+				ctx.Request().Header.Set(KEY_HEADER_NAME, strconv.FormatInt(int64(id), 10))
 				return ctx.Next()
 			}
 		}
@@ -73,7 +75,7 @@ func LoadRoutes(api *ApiDriver, db database.DriverGlobal) {
 
 	clientRouter.Router = api.Group("/api/v1/client", func(ctx *fiber.Ctx) error {
 		if key := ctx.Get(KEY_HEADER_NAME, ""); key != "" {
-			if publicRouter.DB.CheckUserKey(key) {
+			if clientRouter.DB.CheckUserKey(key) {
 				return ctx.Next()
 			}
 		}

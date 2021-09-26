@@ -73,7 +73,7 @@ func (s SqliteDriver) updateVersion() {
 	}
 }
 
-func (s SqliteDriver) CheckSensorKey(key, ip string) bool {
+func (s SqliteDriver) CheckSensorKey(key, ip string) (id int) {
 	r, err := s.Query("SELECT SENSOR_ID FROM SENSORS_IPS WHERE TOKEN = ? AND IP = ? LIMIT 1", key, ip)
 
 	defer func() {
@@ -82,20 +82,20 @@ func (s SqliteDriver) CheckSensorKey(key, ip string) bool {
 
 	if err != nil {
 		//TODO Log error
-		return false
+		return -1
 	}
 
 	if r.Next() {
-		id := -1
+		id = -1
 		if err = r.Scan(&id); err != nil {
 			//TODO Log error
-			return false
+			return -1
 		}
 
-		return id >= 0
+		return id
 	}
 
-	return false
+	return -1
 }
 
 func (s SqliteDriver) CheckUserKey(key string) bool {
