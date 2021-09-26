@@ -73,6 +73,22 @@ func (s SqliteDriver) updateVersion() {
 			panic(err)
 		}
 
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS ACTUATORS(ID INTEGER PRIMARY KEY, NAME TEXT UNIQUE, TYPE CHAR(1))"); err != nil {
+			panic(err)
+		}
+
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS ACTUATOR_LOG(ACTUATOR_ID INTEGER, TAG TEXT, LIMIT_TYPE CHAR(1), TIME DATE)"); err != nil {
+			panic(err)
+		}
+
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS ACTUATOR_TAG_CONFIG(ACTUATOR_ID INTEGER, TAG TEXT, LOW_LIMIT REAL, HIGH_LIMIT REAL, LOW_AJUST REAL, HIGH_AJUST REAL, UNIQUE(ACTUATOR_ID, TAG) )"); err != nil {
+			panic(err)
+		}
+
+		if _, err = s.Exec("CREATE TABLE IF NOT EXISTS ACTUATOR_IPS(ACTUATOR_ID INTEGER, TOKEN CHAR(36), IP CHAR(15))"); err != nil {
+			panic(err)
+		}
+
 		if _, err = s.Exec("INSERT INTO DB VALUES (?)", 0); err != nil {
 			panic(err)
 		}
